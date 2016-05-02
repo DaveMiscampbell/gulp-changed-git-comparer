@@ -6,7 +6,7 @@ var gutil = require('gulp-util');
 var through = require('through2');
 var git = require('gulp-git');
 
-function compareGitHistory(stream, cb, sourceFile, fileToCompare) {
+function compareGitHistory(stream, cb, sourceFile, filesToCompare) {
         fs.readFile('./last_git_sha', function (err, lastGitShaData) {
                 if (err) {
                         if (err.code !== 'ENOENT') {
@@ -23,14 +23,20 @@ function compareGitHistory(stream, cb, sourceFile, fileToCompare) {
                                                 fileName: sourceFile.path
                                         }));
                                 } else {
-                                        if (!fileToCompare) {
+                                        if (!filesToCompare) {
                                                 var relativePath = sourceFile.path.replace(__dirname, '').replace('\\', '').replace(/\\/g, '/').toLowerCase();
                                                 if (stdout.toLowerCase().indexOf(relativePath) !== -1) {
                                                         stream.push(sourceFile);
                                                 }
                                         } else {
-                                                if(stdout.toLowerCase().indexOf(fileToCompare.toLowerCase()) !== -1) {
-                                                        stream.push(sourceFile);
+                                                if (typeof filesToCompare === 'string' || filesToCompare instanceof String) {
+                                                        filesToCompare = [filesToCompare];
+                                                }
+                                                for (var i = 0; i < filesToCompare.length; i++) {
+                                                        var currentFile = filesToCompare[i];
+                                                        if (stdout.toLowerCase().indexOf(currentFile.toLowerCase()) !== -1) {
+                                                                stream.push(sourceFile);
+                                                        }
                                                 }
                                         }
                                 }
@@ -38,16 +44,16 @@ function compareGitHistory(stream, cb, sourceFile, fileToCompare) {
 
                         });
                 }
-                
+
         });
 }
 
-module.exports = function(dest, opts) {
-    opts = opts || {};
-    opts.cwd = opts.cwd || process.cwd();
-    opts.hasChanged = opts.hasChanged || compareGitHistory;
-    
-    return through.obj(function(file, enc, cb) {
-       opts.hasChanged(this, cb, file, dest); 
-    });
+module.exports = function (dest, opts) {
+        opts = opts || {};
+        opts.cwd = opts.cwd || process.cwd();
+        opts.hasChanged = opts.hasChanged || compareGitHistory;
+
+        return through.obj(function (file, enc, cb) {
+                opts.hasChanged(this, cb, file, dest);
+        });
 };
