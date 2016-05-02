@@ -17,7 +17,7 @@ function compareGitHistory(stream, cb, sourceFile, filesToCompare) {
                         cb();
                 } else {
                         var gitCommand = 'diff-tree -r --name-only --no-commit-id ' + lastGitShaData.toString().trim() + ' HEAD';
-                        git.exec({ args: gitCommand }, function (err, stdout) {
+                        git.exec({ args: gitCommand, quiet: true }, function (err, stdout) {
                                 if (err) {
                                         stream.emit('error', new gutil.PluginError('gulp-changed', err, {
                                                 fileName: sourceFile.path
