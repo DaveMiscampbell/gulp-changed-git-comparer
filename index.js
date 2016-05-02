@@ -3,7 +3,7 @@
 var fs = require('fs');
 var path = require('path');
 var gutil = require('gulp-util');
-var through = require('through');
+var through = require('through2');
 var git = require('gulp-git');
 
 function compareGitHistory(stream, cb, sourceFile, fileToCompare) {
