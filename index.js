@@ -23,7 +23,7 @@ function compareGitHistory(stream, cb, sourceFile, fileToCompare) {
                                                 fileName: sourceFile.path
                                         }));
                                 } else {
-                                        if (fileToCompare && fileToCompare.toLowerCase() === 'stream') {
+                                        if (!fileToCompare) {
                                                 var relativePath = sourceFile.path.replace(__dirname, '').replace('\\', '').replace(/\\/g, '/').toLowerCase();
                                                 if (stdout.toLowerCase().indexOf(relativePath) !== -1) {
                                                         stream.push(sourceFile);
