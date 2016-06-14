@@ -13,7 +13,9 @@ function compareGitHistory(stream, cb, sourceFile, filesToCompare) {
                                 stream.emit('error', new gutil.PluginError('gulp-changed', err, {
                                         fileName: sourceFile.path
                                 }));
-                        }
+                        } else {
+                                stream.push(sourceFile);
+                        } 
                         cb();
                 } else {
                         var gitCommand = 'diff-tree -r --name-only --no-commit-id ' + lastGitShaData.toString().trim() + ' HEAD';
